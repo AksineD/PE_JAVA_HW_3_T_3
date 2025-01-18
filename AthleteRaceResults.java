@@ -2,79 +2,82 @@ import java.util.Scanner;
 
 public class AthleteRaceResults {
     public static void main(String[] args) {
-    Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
-    // Read three times (in seconds)
-        System.out.print("הכנס זמן ראשון (בשניות): ");
-    double t1 = scanner.nextDouble();
-        System.out.print("הכנס זמן שני (בשניות): ");
-    double t2 = scanner.nextDouble();
-        System.out.print("הכנס זמן שלישי (בשניות): ");
-    double t3 = scanner.nextDouble();
+        double t1 = readInt(scanner, "Enter the first time (in seconds): ");
+        double t2 = readInt(scanner, "Enter the second time (in seconds): ");
+        double t3 = readInt(scanner, "Enter the third time (in seconds): ");
 
-    // Variables to hold the minimum, middle, and maximum times, and their attempt numbers
-    double minTime, midTime, maxTime;
-    int minAttempt, midAttempt, maxAttempt;
-
-    // Determine the smallest time
-        if (t1 <= t2 && t1 <= t3) {
-        minTime = t1;
-        minAttempt = 1;
-
-        // Compare the remaining t2, t3
-        if (t2 <= t3) {
-            midTime = t2;
-            midAttempt = 2;
-            maxTime = t3;
-            maxAttempt = 3;
-        } else {
-            midTime = t3;
-            midAttempt = 3;
-            maxTime = t2;
-            maxAttempt = 2;
-        }
-    }
-        else if (t2 <= t1 && t2 <= t3) {
-        minTime = t2;
-        minAttempt = 2;
-
-        // Compare the remaining t1, t3
-        if (t1 <= t3) {
-            midTime = t1;
-            midAttempt = 1;
-            maxTime = t3;
-            maxAttempt = 3;
-        } else {
-            midTime = t3;
-            midAttempt = 3;
-            maxTime = t1;
-            maxAttempt = 1;
-        }
-    }
-        else {
-        // Otherwise t3 is the smallest
-        minTime = t3;
-        minAttempt = 3;
-
-        // Compare the remaining t1, t2
-        if (t1 <= t2) {
-            midTime = t1;
-            midAttempt = 1;
-            maxTime = t2;
-            maxAttempt = 2;
-        } else {
-            midTime = t2;
-            midAttempt = 2;
-            maxTime = t1;
-            maxAttempt = 1;
-        }
-    }
-
-    // Print times in ascending order, each with the attempt number
-        System.out.printf("%.2f (ניסיון %d)\n", minTime, minAttempt);
-        System.out.printf("%.2f (ניסיון %d)\n", midTime, midAttempt);
-        System.out.printf("%.2f (ניסיון %d)\n", maxTime, maxAttempt);
+        processAndDisplayResults(t1, t2, t3);
 
         scanner.close();
-}
+    }
+
+    /**
+     * Reads an integer from the user and verifies that it is within the acceptable range.
+     *
+     * @param scanner   Scanner object for reading input
+     * @param prompt    Text to display to the user
+     * @return          A valid integer within the specified range
+     */
+    private static int readInt(Scanner scanner, String prompt) {
+        int number = 0;
+        while (true) {
+            System.out.print(prompt);
+            if (scanner.hasNextInt()) {
+                number = scanner.nextInt(); // Read the integer
+                return number; // Return the valid integer
+            } else {
+                System.out.println("Please enter an integer only.");
+                scanner.nextLine(); // Clear the invalid input
+            }
+        }
+    }
+
+    /**
+     * Function to sort three times and their corresponding attempt numbers in ascending order.
+     * The function determines the smallest, middle, and largest times along with their respective
+     * attempt numbers and displays the results in a readable format.
+     *
+     * @param t1 Time of the first attempt
+     * @param t2 Time of the second attempt
+     * @param t3 Time of the third attempt
+     */
+    public static void processAndDisplayResults(double t1, double t2, double t3) {
+        // Initialize variables for minimum, middle, and maximum times and their attempts
+        double minTime = t1, midTime = t2, maxTime = t3;
+        int minAttempt = 1, midAttempt = 2, maxAttempt = 3;
+
+        // Compare to determine the correct order of times
+        if (t1 > t2) {
+            // Swap t1 and t2
+            minTime = t2;
+            midTime = t1;
+            minAttempt = 2;
+            midAttempt = 1;
+        }
+
+        if (midTime > t3) {
+            // Swap midTime (currently max between t1 and t2) with t3
+            maxTime = midTime;
+            midTime = t3;
+            maxAttempt = midAttempt;
+            midAttempt = 3;
+        }
+
+        if (minTime > midTime) {
+            // Swap minTime and midTime to maintain correct order after any previous adjustments
+            double tempTime = minTime;
+            minTime = midTime;
+            midTime = tempTime;
+
+            int tempAttempt = minAttempt;
+            minAttempt = midAttempt;
+            midAttempt = tempAttempt;
+        }
+
+        System.out.println("The sorted times and their corresponding attempts are:");
+        System.out.printf("%.2f sec (Attempt %d)\n%.2f sec (Attempt %d)\n%.2f sec (Attempt %d)",
+                        minTime, minAttempt, midTime, midAttempt, maxTime, maxAttempt);
+    }
 }
